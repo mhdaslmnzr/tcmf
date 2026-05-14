@@ -53,6 +53,12 @@
   --r-lg: 16px;
   --r-pill: 20px;
   --r-full: 50%;
+
+  /* Legacy aliases for gradual migration */
+  --tcmf-canvas: var(--base);
+  --tcmf-surface: var(--surface);
+  --tcmf-ink: var(--text);
+  --tcmf-primary: var(--text);
 }
 
 @theme inline {
