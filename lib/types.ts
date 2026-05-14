@@ -1,10 +1,4 @@
-export type CauseCategory =
-  | "education"
-  | "health"
-  | "livelihood"
-  | "women"
-  | "environment"
-  | "general";
+export type Pillar = "work" | "educate" | "empower" | "elevate";
 
 export type CampaignStatus = "draft" | "active" | "paused" | "closed";
 
@@ -25,7 +19,7 @@ export interface Campaign {
   id: string;
   slug: string;
   title: string;
-  cause: CauseCategory;
+  pillar: Pillar;
   story: string;
   coverImage: string;
   goalAmount: number;
@@ -45,7 +39,7 @@ export interface CampaignUpdate {
   campaignSlug: string;
   campaignTitle: string;
   coverImage: string;
-  cause: CauseCategory;
+  pillar: Pillar;
   updateType: UpdateType;
   content: string;
   image: string | null;

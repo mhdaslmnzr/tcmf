@@ -8,7 +8,7 @@ import {
   getDistributionForCampaign,
   getSpendsForCampaign,
 } from "@/lib/mock-data";
-import { updateBadgeClass, updateBadgeLabel } from "@/lib/cause-styles";
+import { updateBadgeLabel } from "@/lib/cause-styles";
 import { timeAgo } from "@/lib/format";
 import type { Campaign } from "@/lib/types";
 
@@ -163,9 +163,15 @@ export function CampaignDetailTabs({ campaign }: { campaign: Campaign }) {
               <li key={u.id} className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-black/5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                      updateBadgeClass[u.updateType] ?? updateBadgeClass.general
-                    }`}
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 500,
+                      color: "var(--text-mid)",
+                      background: "var(--base)",
+                      borderRadius: "var(--r-pill)",
+                      padding: "2px 8px",
+                      border: "0.5px solid var(--border-mid)",
+                    }}
                   >
                     {updateBadgeLabel[u.updateType] ?? "Update"}
                   </span>

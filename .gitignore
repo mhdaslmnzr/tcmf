@@ -42,3 +42,4 @@ next-env.d.ts
 
 # Product / prompt documents (binary; keep local only)
 *.docx
+.claude/worktrees/modest-jackson-4f64ba

@@ -23,12 +23,39 @@ export default async function PublicSharePage({ params }: Props) {
   if (!campaign) notFound();
 
   return (
-    <div className="flex min-h-full flex-col bg-[var(--tcmf-canvas)] px-4 py-10">
-      <p className="mb-6 text-center text-xs font-semibold uppercase tracking-wide text-zinc-500">
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--base)",
+        padding: "40px 14px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <p
+        style={{
+          fontSize: "9px",
+          fontWeight: 500,
+          color: "var(--text-muted)",
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          marginBottom: "24px",
+        }}
+      >
         Share without identity · preview
       </p>
       <ShareCardPublic campaign={campaign} />
-      <p className="mx-auto mt-8 max-w-md text-center text-[11px] leading-relaxed text-zinc-500">
+      <p
+        style={{
+          maxWidth: "340px",
+          textAlign: "center",
+          fontSize: "10px",
+          color: "var(--text-muted)",
+          lineHeight: 1.6,
+          marginTop: "24px",
+        }}
+      >
         No donor name or amount appears on this card. In production, Razorpay confirms payment before any
         ledger line is written.
       </p>

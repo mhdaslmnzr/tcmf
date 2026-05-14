@@ -1,67 +1,129 @@
-import Image from "next/image";
 import Link from "next/link";
-import { causeChipClass, causeLabel } from "@/lib/cause-styles";
+import { pillarEyebrow, pillarTokens } from "@/lib/cause-styles";
 import { formatINR } from "@/lib/format";
 import type { Campaign } from "@/lib/types";
 
 function daysLeft(closesAt: string | null, status: Campaign["status"]): string | null {
   if (status !== "active" || !closesAt) return null;
-  const end = new Date(closesAt).getTime();
-  const d = Math.ceil((end - Date.now()) / (1000 * 60 * 60 * 24));
+  const d = Math.ceil((new Date(closesAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
   if (d < 0) return "Closing soon";
-  return `${d} days left`;
+  return `${d}d left`;
 }
 
 export function CampaignGridCard({ campaign, muted }: { campaign: Campaign; muted?: boolean }) {
   const pct = Math.min(100, Math.round((campaign.amountRaised / campaign.goalAmount) * 100));
-  const href = `/campaigns/${campaign.slug}`;
+  const tokens = pillarTokens[campaign.pillar];
   const left = daysLeft(campaign.closesAt, campaign.status);
+
   return (
     <Link
-      href={href}
-      className={`block overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md ${
-        muted ? "opacity-80" : ""
-      }`}
+      href={`/campaigns/${campaign.slug}`}
+      style={{ opacity: muted ? 0.75 : 1 }}
     >
-      <div className="relative aspect-square w-full sm:aspect-[4/5]">
-        <Image
-          src={campaign.coverImage}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 50vw, 240px"
-        />
-        <div className="absolute left-2.5 top-2.5">
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${causeChipClass[campaign.cause]}`}
-          >
-            {causeLabel[campaign.cause]}
-          </span>
-        </div>
-      </div>
-      <div className="space-y-2 p-3">
-        <p className="line-clamp-2 text-sm font-semibold leading-snug text-[var(--tcmf-ink)]">
+      <div
+        style={{
+          background: tokens.bg,
+          borderRadius: "var(--r-lg)",
+          padding: "14px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        {/* Eyebrow */}
+        <p
+          style={{
+            fontSize: "9px",
+            fontWeight: 500,
+            color: tokens.text,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            lineHeight: 1,
+          }}
+        >
+          {pillarEyebrow[campaign.pillar]}
+        </p>
+
+        {/* Title */}
+        <p
+          style={{
+            fontSize: "15px",
+            fontWeight: 500,
+            color: tokens.text,
+            letterSpacing: "-0.01em",
+            lineHeight: 1.25,
+          }}
+          className="line-clamp-3"
+        >
           {campaign.title}
         </p>
+
+        {/* Progress bar */}
         <div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-zinc-100">
+          <div
+            style={{
+              height: "3px",
+              borderRadius: "3px",
+              background: tokens.track,
+              overflow: "hidden",
+            }}
+          >
             <div
-              className="h-full rounded-full bg-[var(--tcmf-primary)]"
-              style={{ width: `${pct}%` }}
+              style={{
+                height: "100%",
+                width: `${pct}%`,
+                borderRadius: "3px",
+                background: tokens.primary,
+              }}
             />
           </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-zinc-500">
-            <span className="font-medium text-zinc-700">
-              {formatINR(campaign.amountRaised)}{" "}
-              <span className="text-zinc-400">/ {formatINR(campaign.goalAmount)}</span>
-            </span>
-            {left ? <span>{left}</span> : campaign.status === "closed" ? <span>Closed</span> : null}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "5px",
+              fontSize: "10px",
+              fontWeight: 500,
+              color: tokens.text,
+              opacity: 0.8,
+            }}
+          >
+            <span>{formatINR(campaign.amountRaised)}</span>
+            <span>{pct}%</span>
           </div>
         </div>
-        <p className="text-[11px] text-zinc-500">
+
+        {/* Meta */}
+        <p
+          style={{
+            fontSize: "10px",
+            fontWeight: 400,
+            color: tokens.text,
+            opacity: 0.7,
+          }}
+        >
           {campaign.beneficiaryReached.toLocaleString("en-IN")} /{" "}
           {campaign.beneficiaryTarget.toLocaleString("en-IN")} beneficiaries
+          {left ? ` · ${left}` : campaign.status === "closed" ? " · Closed" : ""}
         </p>
+
+        {/* Donate button */}
+        {campaign.status === "active" && (
+          <div
+            style={{
+              background: tokens.primary,
+              color: "#FFFFFF",
+              borderRadius: "var(--r-pill)",
+              padding: "6px 11px",
+              fontSize: "11px",
+              fontWeight: 500,
+              textAlign: "center",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Donate
+          </div>
+        )}
       </div>
     </Link>
   );

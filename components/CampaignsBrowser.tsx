@@ -2,26 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { CampaignGridCard } from "@/components/CampaignGridCard";
-import { causeLabel } from "@/lib/cause-styles";
-import type { CauseCategory } from "@/lib/types";
+import { pillarLabel, pillarTokens } from "@/lib/cause-styles";
+import type { Pillar } from "@/lib/types";
 import { mockCampaigns } from "@/lib/mock-data";
 
-const filters: (CauseCategory | "all")[] = [
-  "all",
-  "education",
-  "health",
-  "livelihood",
-  "women",
-  "environment",
-];
+const pillars: Pillar[] = ["work", "educate", "empower", "elevate"];
 
 export function CampaignsBrowser() {
-  const [filter, setFilter] = useState<(typeof filters)[number]>("all");
+  const [filter, setFilter] = useState<Pillar | "all">("all");
   const [q, setQ] = useState("");
 
-  const filteredCampaigns = useMemo(() => {
+  const filtered = useMemo(() => {
     return mockCampaigns.filter((c) => {
-      if (filter !== "all" && c.cause !== filter) return false;
+      if (filter !== "all" && c.pillar !== filter) return false;
       if (q.trim()) {
         const s = q.trim().toLowerCase();
         if (!c.title.toLowerCase().includes(s) && !c.slug.toLowerCase().includes(s)) return false;
@@ -30,65 +23,170 @@ export function CampaignsBrowser() {
     });
   }, [filter, q]);
 
-  const active = useMemo(
-    () => filteredCampaigns.filter((c) => c.status === "active"),
-    [filteredCampaigns],
-  );
-  const closed = useMemo(
-    () => filteredCampaigns.filter((c) => c.status === "closed"),
-    [filteredCampaigns],
-  );
+  const active = useMemo(() => filtered.filter((c) => c.status === "active"), [filtered]);
+  const closed = useMemo(() => filtered.filter((c) => c.status === "closed"), [filtered]);
 
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-[var(--tcmf-ink)]">Campaigns</h1>
-        <p className="mt-1 text-sm text-zinc-600">Browse active work and completed campaigns.</p>
+    <div>
+      {/* Inner top bar */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          background: "var(--surface)",
+          borderBottom: "0.5px solid var(--border-mid)",
+          padding: "12px 14px 10px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "14px",
+            fontWeight: 500,
+            color: "var(--text)",
+            letterSpacing: "-0.01em",
+            margin: 0,
+          }}
+        >
+          Campaigns
+        </h1>
+        <p style={{ fontSize: "10px", color: "var(--text-muted)", marginTop: "2px" }}>
+          Browse active work and completed campaigns
+        </p>
       </div>
-      <input
-        type="search"
-        placeholder="Search by title…"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none ring-black/5 placeholder:text-zinc-400 focus:ring-2 focus:ring-[var(--tcmf-primary)]/25"
-      />
-      <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {filters.map((f) => (
+
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "14px" }}>
+        {/* Search */}
+        <input
+          type="search"
+          placeholder="Search by title…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          style={{
+            width: "100%",
+            borderRadius: "var(--r-pill)",
+            border: "0.5px solid var(--border-mid)",
+            background: "var(--surface)",
+            padding: "8px 14px",
+            fontSize: "13px",
+            color: "var(--text)",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
+        />
+
+        {/* Filter chips */}
+        <div
+          style={{
+            display: "flex",
+            gap: "6px",
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+          className="[-webkit-scrollbar]:hidden"
+        >
+          {/* All chip */}
           <button
-            key={f}
             type="button"
-            onClick={() => setFilter(f)}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
-              filter === f
-                ? "bg-[var(--tcmf-ink)] text-white"
-                : "bg-white text-zinc-600 ring-1 ring-black/5 hover:bg-zinc-50"
-            }`}
+            onClick={() => setFilter("all")}
+            style={{
+              flexShrink: 0,
+              borderRadius: "var(--r-pill)",
+              padding: "5px 11px",
+              fontSize: "10px",
+              fontWeight: 500,
+              border: filter === "all" ? "none" : "0.5px solid var(--border-mid)",
+              background: filter === "all" ? "var(--text)" : "var(--surface)",
+              color: filter === "all" ? "#FFFFFF" : "var(--text-mid)",
+              cursor: "pointer",
+            }}
           >
-            {f === "all" ? "All" : causeLabel[f]}
+            All
           </button>
-        ))}
+
+          {pillars.map((p) => {
+            const tokens = pillarTokens[p];
+            const isActive = filter === p;
+            return (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setFilter(p)}
+                style={{
+                  flexShrink: 0,
+                  borderRadius: "var(--r-pill)",
+                  padding: "5px 11px",
+                  fontSize: "10px",
+                  fontWeight: 500,
+                  border: isActive ? "none" : `0.5px solid ${tokens.primary}4D`,
+                  background: isActive ? tokens.primary : tokens.bg,
+                  color: isActive ? "#FFFFFF" : tokens.text,
+                  cursor: "pointer",
+                }}
+              >
+                {pillarLabel[p]}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active campaigns */}
+        <section style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <h2
+            style={{
+              fontSize: "9px",
+              fontWeight: 500,
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              margin: 0,
+            }}
+          >
+            Active
+          </h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {active.map((c) => (
+              <CampaignGridCard key={c.id} campaign={c} />
+            ))}
+          </div>
+          {active.length === 0 && (
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: "13px",
+                color: "var(--text-muted)",
+                padding: "24px 0",
+              }}
+            >
+              No campaigns match your filters.
+            </p>
+          )}
+        </section>
+
+        {/* Completed campaigns */}
+        {closed.length > 0 && (
+          <section style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <h2
+              style={{
+                fontSize: "9px",
+                fontWeight: 500,
+                color: "var(--text-muted)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                margin: 0,
+              }}
+            >
+              Completed
+            </h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {closed.map((c) => (
+                <CampaignGridCard key={c.id} campaign={c} muted />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Active</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {active.map((c) => (
-            <CampaignGridCard key={c.id} campaign={c} />
-          ))}
-        </div>
-        {active.length === 0 ? (
-          <p className="rounded-2xl bg-white px-4 py-6 text-center text-sm text-zinc-500 ring-1 ring-black/5">
-            No campaigns match your filters.
-          </p>
-        ) : null}
-      </section>
-      <section className="space-y-3 pt-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Completed</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {closed.map((c) => (
-            <CampaignGridCard key={c.id} campaign={c} muted />
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

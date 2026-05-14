@@ -3,15 +3,50 @@ import { HomeFeed } from "@/components/HomeFeed";
 
 export default function HomePage() {
   return (
-    <div className="space-y-5">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight text-[var(--tcmf-ink)]">Home</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Updates across campaigns. Amounts you give stay private; the ledger stays public.
+    <div>
+      {/* Home top bar */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          background: "var(--surface)",
+          borderBottom: "0.5px solid var(--border-mid)",
+          padding: "12px 14px 10px",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "10px",
+            fontWeight: 400,
+            color: "var(--text-muted)",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            lineHeight: 1,
+            marginBottom: "4px",
+          }}
+        >
+          The Common Man Foundation
         </p>
+        <h1
+          style={{
+            fontSize: "22px",
+            fontWeight: 500,
+            color: "var(--text)",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.15,
+            margin: 0,
+          }}
+        >
+          Good deeds, open books.
+        </h1>
       </div>
-      <ImpactStrip />
-      <HomeFeed />
+
+      {/* Body */}
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "16px" }}>
+        <ImpactStrip />
+        <HomeFeed />
+      </div>
     </div>
   );
 }

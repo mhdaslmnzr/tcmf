@@ -1,29 +1,51 @@
-import type { CauseCategory } from "./types";
+import type { Pillar } from "./types";
 
-export const causeLabel: Record<CauseCategory, string> = {
-  education: "Education",
-  health: "Health",
-  livelihood: "Livelihood",
-  women: "Women",
-  environment: "Environment",
-  general: "General",
+export const pillarLabel: Record<Pillar, string> = {
+  work: "Work",
+  educate: "Educate",
+  empower: "Empower",
+  elevate: "Elevate",
 };
 
-export const causeChipClass: Record<CauseCategory, string> = {
-  education: "bg-sky-100 text-sky-900",
-  health: "bg-rose-100 text-rose-900",
-  livelihood: "bg-amber-100 text-amber-900",
-  women: "bg-violet-100 text-violet-900",
-  environment: "bg-emerald-100 text-emerald-900",
-  general: "bg-zinc-200 text-zinc-800",
+export const pillarEyebrow: Record<Pillar, string> = {
+  work: "WORK",
+  educate: "EDUCATE",
+  empower: "EMPOWER",
+  elevate: "ELEVATE",
 };
 
-export const updateBadgeClass: Record<string, string> = {
-  milestone: "bg-indigo-100 text-indigo-800",
-  bill_uploaded: "bg-orange-100 text-orange-900",
-  distribution: "bg-teal-100 text-teal-900",
-  closed: "bg-zinc-200 text-zinc-800",
-  general: "bg-zinc-100 text-zinc-700",
+export interface PillarTokens {
+  primary: string;
+  bg: string;
+  text: string;
+  track: string;
+}
+
+export const pillarTokens: Record<Pillar, PillarTokens> = {
+  work: {
+    primary: "var(--work)",
+    bg: "var(--work-bg)",
+    text: "var(--work-text)",
+    track: "var(--work-track)",
+  },
+  educate: {
+    primary: "var(--educate)",
+    bg: "var(--educate-bg)",
+    text: "var(--educate-text)",
+    track: "var(--educate-track)",
+  },
+  empower: {
+    primary: "var(--empower)",
+    bg: "var(--empower-bg)",
+    text: "var(--empower-text)",
+    track: "var(--empower-track)",
+  },
+  elevate: {
+    primary: "var(--elevate)",
+    bg: "var(--elevate-bg)",
+    text: "var(--elevate-text)",
+    track: "var(--elevate-track)",
+  },
 };
 
 export const updateBadgeLabel: Record<string, string> = {

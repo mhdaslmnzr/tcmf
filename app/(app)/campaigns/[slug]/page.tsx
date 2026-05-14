@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CampaignDetailTabs } from "@/components/CampaignDetailTabs";
 import { DonateStickyBar } from "@/components/DonateStickyBar";
 import { FollowCampaignBox } from "@/components/FollowCampaignBox";
-import { causeChipClass, causeLabel } from "@/lib/cause-styles";
+import { pillarEyebrow, pillarTokens } from "@/lib/cause-styles";
 import { formatINR } from "@/lib/format";
 import { getCampaignBySlug, getShareTokenForSlug, mockCampaigns } from "@/lib/mock-data";
 
@@ -28,60 +27,99 @@ export default async function CampaignDetailPage({ params }: Props) {
 
   const pct = Math.min(100, Math.round((campaign.amountRaised / campaign.goalAmount) * 100));
   const shareToken = getShareTokenForSlug(slug);
+  const tokens = pillarTokens[campaign.pillar];
 
   return (
-    <div className="space-y-4 pb-40">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link href="/campaigns" className="text-sm font-semibold text-[var(--tcmf-primary)]">
-          ← Campaigns
+    <div style={{ paddingBottom: "120px" }}>
+      {/* Inner top bar */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          background: "var(--surface)",
+          borderBottom: "0.5px solid var(--border-mid)",
+          padding: "12px 14px 10px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Link
+          href="/campaigns"
+          style={{ fontSize: "13px", fontWeight: 500, color: tokens.primary, textDecoration: "none" }}
+        >
+          ← Back
         </Link>
         {shareToken ? (
           <Link
             href={`/share/${shareToken}`}
-            className="text-sm font-semibold text-zinc-600 underline-offset-2 hover:text-[var(--tcmf-ink)] hover:underline"
+            style={{ fontSize: "12px", color: "var(--text-muted)", textDecoration: "none" }}
           >
-            Share card
+            Share
           </Link>
         ) : null}
       </div>
-      <div className="relative aspect-[16/11] w-full overflow-hidden rounded-3xl ring-1 ring-black/5">
-        <Image
-          src={campaign.coverImage}
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width:768px) 100vw, 480px"
-        />
-        <div className="absolute left-3 top-3">
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${causeChipClass[campaign.cause]}`}
+
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "16px" }}>
+        {/* Campaign hero card */}
+        <div style={{ background: tokens.bg, borderRadius: "var(--r-lg)", padding: "14px" }}>
+          <p
+            style={{
+              fontSize: "9px",
+              fontWeight: 500,
+              color: tokens.text,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              marginBottom: "6px",
+            }}
           >
-            {causeLabel[campaign.cause]}
-          </span>
-        </div>
-      </div>
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-[var(--tcmf-ink)]">{campaign.title}</h1>
-        <div className="mt-3">
-          <div className="h-2 overflow-hidden rounded-full bg-zinc-100">
-            <div className="h-full rounded-full bg-[var(--tcmf-primary)]" style={{ width: `${pct}%` }} />
-          </div>
-          <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 text-sm">
-            <span className="font-semibold tabular-nums text-[var(--tcmf-ink)]">
-              {formatINR(campaign.amountRaised)}{" "}
-              <span className="font-normal text-zinc-500">raised of {formatINR(campaign.goalAmount)}</span>
-            </span>
-            <span className="text-xs font-medium text-zinc-500">
+            {pillarEyebrow[campaign.pillar]}
+          </p>
+          <h1
+            style={{
+              fontSize: "15px",
+              fontWeight: 500,
+              color: tokens.text,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.25,
+              marginBottom: "12px",
+            }}
+          >
+            {campaign.title}
+          </h1>
+          {/* Progress bar */}
+          <div>
+            <div style={{ height: "5px", borderRadius: "3px", background: tokens.track, overflow: "hidden" }}>
+              <div
+                style={{ height: "100%", width: `${pct}%`, borderRadius: "3px", background: tokens.primary }}
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "6px",
+                fontSize: "12px",
+                fontWeight: 500,
+                color: tokens.text,
+              }}
+            >
+              <span>{formatINR(campaign.amountRaised)} raised</span>
+              <span>{pct}%</span>
+            </div>
+            <p style={{ fontSize: "10px", color: tokens.text, opacity: 0.6, marginTop: "4px" }}>
+              of {formatINR(campaign.goalAmount)} goal ·{" "}
               {campaign.beneficiaryReached.toLocaleString("en-IN")} /{" "}
-              {campaign.beneficiaryTarget.toLocaleString("en-IN")} beneficiaries (public count)
-            </span>
+              {campaign.beneficiaryTarget.toLocaleString("en-IN")} beneficiaries
+            </p>
           </div>
         </div>
+
+        <FollowCampaignBox campaignTitle={campaign.title} />
+        <CampaignDetailTabs campaign={campaign} />
+        <DonateStickyBar campaign={campaign} />
       </div>
-      <FollowCampaignBox campaignTitle={campaign.title} />
-      <CampaignDetailTabs campaign={campaign} />
-      <DonateStickyBar campaign={campaign} />
     </div>
   );
 }

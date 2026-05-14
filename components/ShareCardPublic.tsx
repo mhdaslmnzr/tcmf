@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
-import { causeChipClass, causeLabel } from "@/lib/cause-styles";
+import { pillarEyebrow, pillarTokens } from "@/lib/cause-styles";
+import { formatINR } from "@/lib/format";
 import type { Campaign } from "@/lib/types";
 
 const SHARE_MESSAGE =
@@ -8,34 +8,97 @@ const SHARE_MESSAGE =
 
 export function ShareCardPublic({ campaign }: { campaign: Campaign }) {
   const pct = Math.min(100, Math.round((campaign.amountRaised / campaign.goalAmount) * 100));
+  const tokens = pillarTokens[campaign.pillar];
   return (
-    <article className="mx-auto max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-black/5">
-      <div className="relative aspect-[16/10] w-full bg-zinc-100">
-        <Image src={campaign.coverImage} alt="" fill className="object-cover" sizes="(max-width:768px) 100vw, 400px" />
-        <div className="absolute left-3 top-3">
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${causeChipClass[campaign.cause]}`}
-          >
-            {causeLabel[campaign.cause]}
-          </span>
-        </div>
-      </div>
-      <div className="space-y-3 p-5">
-        <h1 className="text-lg font-bold leading-snug text-[var(--tcmf-ink)]">{campaign.title}</h1>
+    <article
+      style={{
+        maxWidth: "375px",
+        margin: "0 auto",
+        borderRadius: "var(--r-lg)",
+        background: tokens.bg,
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
+        {/* Eyebrow */}
+        <p
+          style={{
+            fontSize: "9px",
+            fontWeight: 500,
+            color: tokens.text,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+          }}
+        >
+          {pillarEyebrow[campaign.pillar]}
+        </p>
+
+        {/* Title */}
+        <h1
+          style={{
+            fontSize: "15px",
+            fontWeight: 500,
+            color: tokens.text,
+            letterSpacing: "-0.01em",
+            lineHeight: 1.25,
+          }}
+        >
+          {campaign.title}
+        </h1>
+
+        {/* Progress */}
         <div>
-          <div className="h-2 overflow-hidden rounded-full bg-zinc-100">
-            <div className="h-full rounded-full bg-[var(--tcmf-primary)]" style={{ width: `${pct}%` }} />
+          <div style={{ height: "5px", borderRadius: "3px", background: tokens.track, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${pct}%`, borderRadius: "3px", background: tokens.primary }} />
           </div>
-          <p className="mt-2 text-xs font-medium text-zinc-500">
-            Progress is public. Donor names and individual amounts are never shown.
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "5px",
+              fontSize: "11px",
+              fontWeight: 500,
+              color: tokens.text,
+            }}
+          >
+            <span>{formatINR(campaign.amountRaised)} raised</span>
+            <span>{pct}%</span>
+          </div>
+          <p style={{ fontSize: "9px", color: tokens.text, opacity: 0.6, marginTop: "4px", fontStyle: "italic" }}>
+            Donor names and amounts are never shown publicly.
           </p>
         </div>
-        <blockquote className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm font-medium leading-relaxed text-zinc-800">
-          “{SHARE_MESSAGE}”
+
+        {/* Share message */}
+        <blockquote
+          style={{
+            background: "rgba(0,0,0,0.04)",
+            borderRadius: "var(--r-md)",
+            padding: "10px 12px",
+            fontSize: "12px",
+            fontWeight: 400,
+            color: tokens.text,
+            lineHeight: 1.5,
+            margin: 0,
+          }}
+        >
+          &ldquo;{SHARE_MESSAGE}&rdquo;
         </blockquote>
+
+        {/* CTA */}
         <Link
           href={`/campaigns/${campaign.slug}`}
-          className="block w-full rounded-xl bg-[var(--tcmf-primary)] py-3 text-center text-sm font-semibold text-white"
+          style={{
+            display: "block",
+            background: tokens.primary,
+            color: "#FFFFFF",
+            borderRadius: "var(--r-pill)",
+            padding: "10px",
+            textAlign: "center",
+            fontSize: "12px",
+            fontWeight: 500,
+            textDecoration: "none",
+          }}
         >
           View campaign
         </Link>

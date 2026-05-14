@@ -5,20 +5,51 @@ type ImpactStatsShape = typeof impactStats;
 
 export function ImpactStrip({ stats = impactStats }: { stats?: ImpactStatsShape }) {
   const cells = [
-    { label: "Campaigns done", value: String(stats.campaignsCompleted) },
-    { label: "Raised (all time)", value: formatCompactINR(stats.totalRaised) },
-    { label: "Spent (verified)", value: formatCompactINR(stats.totalSpent) },
-    { label: "Beneficiaries", value: stats.beneficiariesReached.toLocaleString("en-IN") },
+    { label: "CAMPAIGNS", value: String(stats.campaignsCompleted) },
+    { label: "RAISED", value: formatCompactINR(stats.totalRaised) },
+    { label: "SPENT", value: formatCompactINR(stats.totalSpent) },
+    { label: "REACHED", value: stats.beneficiariesReached.toLocaleString("en-IN") },
   ];
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {cells.map((c) => (
+    <div
+      style={{
+        display: "flex",
+        border: "0.5px solid var(--border)",
+        borderRadius: "var(--r-md)",
+        overflow: "hidden",
+        background: "var(--surface)",
+      }}
+    >
+      {cells.map((c, i) => (
         <div
           key={c.label}
-          className="rounded-2xl bg-white px-3 py-3 text-center shadow-sm ring-1 ring-black/5"
+          style={{
+            flex: 1,
+            padding: "10px 6px",
+            textAlign: "center",
+            borderRight: i < cells.length - 1 ? "0.5px solid var(--border)" : undefined,
+          }}
         >
-          <div className="text-lg font-semibold tabular-nums text-[var(--tcmf-ink)]">{c.value}</div>
-          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+          <div
+            style={{
+              fontSize: "14px",
+              fontWeight: 500,
+              color: "var(--text)",
+              lineHeight: 1.2,
+            }}
+          >
+            {c.value}
+          </div>
+          <div
+            style={{
+              fontSize: "8px",
+              fontWeight: 400,
+              color: "var(--text-muted)",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              marginTop: "3px",
+            }}
+          >
             {c.label}
           </div>
         </div>

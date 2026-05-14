@@ -1,42 +1,92 @@
 import Image from "next/image";
 import Link from "next/link";
-import { causeChipClass, causeLabel, updateBadgeClass, updateBadgeLabel } from "@/lib/cause-styles";
+import { pillarEyebrow, pillarTokens, updateBadgeLabel } from "@/lib/cause-styles";
 import { timeAgo } from "@/lib/format";
 import type { CampaignUpdate } from "@/lib/types";
 
 export function FeedCard({ update }: { update: CampaignUpdate }) {
   const href = `/campaigns/${update.campaignSlug}`;
+  const tokens = pillarTokens[update.pillar];
   return (
-    <Link
-      href={href}
-      className="block overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-md"
-    >
-      <div className="relative aspect-[16/10] w-full">
-        <Image
-          src={update.coverImage}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 480px"
-        />
-        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${causeChipClass[update.cause]}`}
+    <Link href={href} style={{ display: "block", textDecoration: "none" }}>
+      <div
+        style={{
+          background: tokens.bg,
+          borderRadius: "var(--r-lg)",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          {/* Eyebrow + badge row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                fontSize: "9px",
+                fontWeight: 500,
+                color: tokens.text,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              {pillarEyebrow[update.pillar]}
+            </span>
+            <span
+              style={{
+                fontSize: "9px",
+                fontWeight: 500,
+                color: tokens.text,
+                opacity: 0.6,
+                letterSpacing: "0.04em",
+              }}
+            >
+              · {updateBadgeLabel[update.updateType] ?? "Update"}
+            </span>
+          </div>
+
+          {/* Campaign title */}
+          <p
+            style={{
+              fontSize: "15px",
+              fontWeight: 500,
+              color: tokens.text,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.25,
+              margin: 0,
+            }}
           >
-            {causeLabel[update.cause]}
-          </span>
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${updateBadgeClass[update.updateType] ?? updateBadgeClass.general}`}
+            {update.campaignTitle}
+          </p>
+
+          {/* Update content */}
+          <p
+            style={{
+              fontSize: "12px",
+              fontWeight: 400,
+              color: tokens.text,
+              opacity: 0.8,
+              lineHeight: 1.5,
+              margin: 0,
+            }}
           >
-            {updateBadgeLabel[update.updateType] ?? "Update"}
-          </span>
+            {update.content}
+          </p>
+
+          {/* Time */}
+          <p
+            style={{
+              fontSize: "10px",
+              color: tokens.text,
+              opacity: 0.5,
+              margin: 0,
+            }}
+          >
+            {timeAgo(update.postedAt)}
+          </p>
         </div>
-      </div>
-      <div className="space-y-2 p-4">
-        <p className="text-sm font-semibold text-[var(--tcmf-ink)]">{update.campaignTitle}</p>
-        <p className="text-sm leading-relaxed text-zinc-700">{update.content}</p>
+
+        {/* Optional update image */}
         {update.image ? (
-          <div className="relative mt-2 aspect-[2/1] w-full overflow-hidden rounded-2xl">
+          <div style={{ position: "relative", aspectRatio: "16/9", width: "100%" }}>
             <Image
               src={update.image}
               alt=""
@@ -46,7 +96,6 @@ export function FeedCard({ update }: { update: CampaignUpdate }) {
             />
           </div>
         ) : null}
-        <p className="text-xs font-medium text-zinc-400">{timeAgo(update.postedAt)}</p>
       </div>
     </Link>
   );
